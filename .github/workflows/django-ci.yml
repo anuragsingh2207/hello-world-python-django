@@ -1,0 +1,33 @@
+name: Python Django CICD
+on:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+env:  
+  USERNAME: ${{secrets.DOCKER_USERNAME}}
+  PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+
+jobs:
+  build:
+    name: Build & Push Python Django Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+
+      - name: Build Docker Image
+        run: docker build -t anuragsingh2207/hello-world-django:latest .
+
+      - name: Docker Login
+        run: docker login -u="${{env.USERNAME}}" -p="${{env.PASSWORD}}"
+
+      - name: Push Docker Image
+        run: docker push  anuragsingh2207/hello-world-django:latest
